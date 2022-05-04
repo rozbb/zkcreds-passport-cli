@@ -173,15 +173,16 @@ fn main() {
             let mut vk_file =
                 File::create(verifying_key).expect("couldn't create verifying key file");
             ser_to_base64(pk, &mut pk_file).expect("couldn't serialize proving key");
-            // TODO: Get verif key serialization working
-            ser_to_base64(todo!(), &mut vk_file).expect("couldn't serialize verifying key");
+            ser_to_base64(vk, &mut vk_file).expect("couldn't serialize verifying key");
         }
         Command::Issue { verifying_key } => {
             // Deserialize the request and verification key
+            let mut vk_file =
+                File::create(verifying_key).expect("couldn't create verifying key file");
             let req = deser_from_base64::<_, IssuanceReq>(&mut io::stdin())
                 .expect("request deserialization failed");
-            // TODO: Get verif key deserialization working
-            let vk: PredVerifyingKey = todo!();
+            let vk = deser_from_base64::<_, PredVerifyingKey>(&mut vk_file)
+                .expect("couldn't deserialize verifying key");
 
             // Check issuance
             assert!(check_issuance(&vk, &req), "Issuance verification failed");
