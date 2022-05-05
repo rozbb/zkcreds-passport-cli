@@ -36,6 +36,6 @@ rev = "3402a729b7104983c9779714ab8580de5187bbdd"
 
 [dependencies.zkcreds]
 git = "ssh://git@github.com/rozbb/zkcreds-rs"
-rev = "18bfdf315a61dc212b1d677ac3346bff7657b68e"
+rev = "65c1af9bd10005fdfda9e8dd6cc7e2ffc3b08317"
 
 [dev-dependencies]
