@@ -1,8 +1,8 @@
 use crate::passport_info::{PersonalInfo, PersonalInfoVar};
 
 use zkcreds::proof_data_structures::{
-    PredProof as ZeronymPredProof, PredProvingKey as ZeronymPredPk,
-    PredVerifyingKey as ZeronymPredVk,
+    PredProof as ZkcredsPredProof, PredProvingKey as ZkcredsPredPk,
+    PredVerifyingKey as ZkcredsPredVk,
 };
 
 use ark_bls12_381::Bls12_381;
@@ -83,7 +83,7 @@ pub(crate) type PassportComSchemeG =
 pub(crate) type ComTree = zkcreds::com_tree::ComTree<Fr, H, PassportComScheme>;
 
 /// Type aliases for Groth16 stuff
-pub(crate) type PredProof = ZeronymPredProof<
+pub(crate) type PredProof = ZkcredsPredProof<
     Bls12_381,
     PersonalInfo,
     PersonalInfoVar,
@@ -92,7 +92,7 @@ pub(crate) type PredProof = ZeronymPredProof<
     H,
     HG,
 >;
-pub(crate) type PredProvingKey = ZeronymPredPk<
+pub(crate) type PredProvingKey = ZkcredsPredPk<
     Bls12_381,
     PersonalInfo,
     PersonalInfoVar,
@@ -101,7 +101,7 @@ pub(crate) type PredProvingKey = ZeronymPredPk<
     H,
     HG,
 >;
-pub(crate) type PredVerifyingKey = ZeronymPredVk<
+pub(crate) type PredVerifyingKey = ZkcredsPredVk<
     Bls12_381,
     PersonalInfo,
     PersonalInfoVar,
