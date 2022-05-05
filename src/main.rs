@@ -65,10 +65,9 @@ fn gen_issuance_crs<R: Rng>(rng: &mut R) -> (PredProvingKey, PredVerifyingKey) {
 /// With their passport, a user constructs a `PersonalInfo` struct and requests issuance
 fn user_req_issuance<R: Rng>(
     rng: &mut R,
+    dump: &PassportDump,
     issuance_pk: &PredProvingKey,
 ) -> (PersonalInfo, IssuanceReq) {
-    // Load the passport and parse it into a `PersonalInfo` struct
-    let dump = load_dump();
     let my_info = PersonalInfo::from_passport(rng, &dump, TODAY, MAX_VALID_YEARS);
     let attrs_com = my_info.commit();
 
@@ -83,7 +82,7 @@ fn user_req_issuance<R: Rng>(
     let req = IssuanceReq {
         attrs_com,
         econtent_hash: dump.econtent_hash().to_vec(),
-        sig: dump.sig,
+        sig: dump.sig.clone(),
         hash_proof,
     };
 
@@ -124,10 +123,22 @@ enum Command {
         verifying_key: PathBuf,
     },
 
+    /// Outputs to STDOUT a base64-encoded issuance request. The input is a JSON-encoded passport
+    /// dump.
+    IssueReq {
+        /// Path to the issuance proving key
+        #[clap(short, long, parse(from_os_str), value_name = "FILE")]
+        proving_key: PathBuf,
+
+        /// Path to the passport dump JSON file
+        #[clap(short, long, parse(from_os_str), value_name = "FILE")]
+        dump_file: PathBuf,
+    },
+
     /// Checks a base64-encoded IssuanceReq, given via STDIN. On verification success, outputs a
     /// base64-encoded credential to STDOUT and exits with exit code 0. On failure, exits with
     /// nonzero exit code.
-    Issue {
+    IssueGrant {
         /// Path to the issuance verifying key
         #[clap(short, long, parse(from_os_str), value_name = "FILE")]
         verifying_key: PathBuf,
@@ -145,7 +156,7 @@ enum Command {
 
 fn deser_from_base64<R: Read, T: CanonicalDeserialize>(r: &mut R) -> Result<T, SerializationError> {
     let b64_reader = base64::read::DecoderReader::new(r, base64::STANDARD);
-    T::deserialize_unchecked(b64_reader)
+    T::deserialize(b64_reader)
 }
 
 fn ser_to_base64<W: Write, T: CanonicalSerialize>(
@@ -157,6 +168,7 @@ fn ser_to_base64<W: Write, T: CanonicalSerialize>(
 }
 
 fn main() {
+    let mut rng = rand::thread_rng();
     let cli = Cli::parse();
 
     match cli.command {
@@ -165,7 +177,6 @@ fn main() {
             verifying_key,
         } => {
             // Generate the CRS
-            let mut rng = rand::thread_rng();
             let (pk, vk) = gen_issuance_crs(&mut rng);
 
             // Write the CRS
@@ -175,10 +186,27 @@ fn main() {
             ser_to_base64(pk, &mut pk_file).expect("couldn't serialize proving key");
             ser_to_base64(vk, &mut vk_file).expect("couldn't serialize verifying key");
         }
-        Command::Issue { verifying_key } => {
+
+        Command::IssueReq {
+            proving_key,
+            dump_file,
+        } => {
             // Deserialize the request and verification key
-            let mut vk_file =
-                File::create(verifying_key).expect("couldn't create verifying key file");
+            let mut pk_file = File::open(proving_key).expect("couldn't open proving key file");
+            let mut dump_file = File::open(dump_file).expect("couldn't open passport dump file");
+            let dump: PassportDump = serde_json::from_reader(&mut dump_file)
+                .expect("passport dump deserialization failed");
+            let pk = deser_from_base64::<_, PredProvingKey>(&mut pk_file)
+                .expect("couldn't deserialize proving key");
+
+            let (_, req) = user_req_issuance(&mut rng, &dump, &pk);
+            ser_to_base64(req, &mut io::stdout()).expect("couldn't serialize issuance req");
+            println!()
+        }
+
+        Command::IssueGrant { verifying_key } => {
+            // Deserialize the request and verification key
+            let mut vk_file = File::open(verifying_key).expect("couldn't open verifying key file");
             let req = deser_from_base64::<_, IssuanceReq>(&mut io::stdin())
                 .expect("request deserialization failed");
             let vk = deser_from_base64::<_, PredVerifyingKey>(&mut vk_file)
