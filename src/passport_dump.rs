@@ -16,11 +16,11 @@ pub struct PassportDump {
     #[serde(deserialize_with = "bytes_from_b64")]
     pub(crate) sig: Vec<u8>,
     #[serde(deserialize_with = "bytes_from_b64")]
-    pub(crate) cert: Vec<u8>,
+    pub(crate) _cert: Vec<u8>,
     #[serde(rename = "digest-alg")]
-    pub(crate) digest_alg: String,
+    pub(crate) _digest_alg: String,
     #[serde(rename = "sig-alg")]
-    pub(crate) sig_alg: String,
+    pub(crate) _sig_alg: String,
 }
 
 impl PassportDump {

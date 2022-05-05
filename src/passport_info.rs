@@ -111,29 +111,6 @@ fn date_to_u32(date: &[u8], not_after: u32) -> u32 {
 }
 
 impl PersonalInfo {
-    /// Constructs a new `PersonalInfo`, sampling a random nonce for commitment
-    pub(crate) fn new<R: Rng>(
-        rng: &mut R,
-        nationality: [u8; STATE_ID_LEN],
-        name: [u8; NAME_LEN],
-        dob: u32,
-        passport_expiry: u32,
-        biometrics: Biometrics,
-    ) -> PersonalInfo {
-        let nonce = ComNonce::<PassportComScheme>::rand(rng);
-        let seed = Fr::rand(rng);
-
-        PersonalInfo {
-            nonce,
-            seed,
-            nationality,
-            name,
-            dob,
-            passport_expiry,
-            biometrics,
-        }
-    }
-
     /// Converts the given passport dump into a structured attribute struct. Requires `today` as an
     /// integer whose base-10 representation is of the form YYYYMMDD. `max_valid_years` is the
     /// longest that a passport can be valid, in years.
@@ -168,10 +145,6 @@ impl PersonalInfo {
         info.biometrics.0 = dump.dg2.clone();
 
         info
-    }
-
-    pub fn biometrics_hash(&self) -> [u8; HASH_LEN] {
-        self.biometrics.hash()
     }
 }
 

@@ -1,11 +1,8 @@
 use crate::passport_info::{PersonalInfo, PersonalInfoVar};
 
 use zkcreds::proof_data_structures::{
-    ForestProof as ZeronymForestProof, ForestProvingKey as ZeronymForestPk,
-    ForestVerifyingKey as ZeronymForestVk, PredProof as ZeronymPredProof,
-    PredProvingKey as ZeronymPredPk, PredVerifyingKey as ZeronymPredVk,
-    TreeProof as ZeronymTreeProof, TreeProvingKey as ZeronymTreePk,
-    TreeVerifyingKey as ZeronymTreeVk,
+    PredProof as ZeronymPredProof, PredProvingKey as ZeronymPredPk,
+    PredVerifyingKey as ZeronymPredVk,
 };
 
 use ark_bls12_381::Bls12_381;
@@ -84,11 +81,17 @@ pub(crate) type PassportComSchemeG =
     zkcreds::compressed_pedersen::constraints::CommGadget<EdwardsParameters, FqVar, Window9x128>;
 
 pub(crate) type ComTree = zkcreds::com_tree::ComTree<Fr, H, PassportComScheme>;
-pub(crate) type ComForest = zkcreds::com_forest::ComForest<Fr, H, PassportComScheme>;
-pub(crate) type ComTreePath = zkcreds::com_tree::ComTreePath<Fr, H, PassportComScheme>;
-pub(crate) type ComForestRoots = zkcreds::com_forest::ComForestRoots<Fr, H>;
 
 /// Type aliases for Groth16 stuff
+pub(crate) type PredProof = ZeronymPredProof<
+    Bls12_381,
+    PersonalInfo,
+    PersonalInfoVar,
+    PassportComScheme,
+    PassportComSchemeG,
+    H,
+    HG,
+>;
 pub(crate) type PredProvingKey = ZeronymPredPk<
     Bls12_381,
     PersonalInfo,
@@ -107,27 +110,6 @@ pub(crate) type PredVerifyingKey = ZeronymPredVk<
     H,
     HG,
 >;
-pub(crate) type TreeProvingKey =
-    ZeronymTreePk<Bls12_381, PersonalInfo, PassportComScheme, PassportComSchemeG, H, HG>;
-pub(crate) type TreeVerifyingKey =
-    ZeronymTreeVk<Bls12_381, PersonalInfo, PassportComScheme, PassportComSchemeG, H, HG>;
-pub(crate) type ForestProvingKey =
-    ZeronymForestPk<Bls12_381, PersonalInfo, PassportComScheme, PassportComSchemeG, H, HG>;
-pub(crate) type ForestVerifyingKey =
-    ZeronymForestVk<Bls12_381, PersonalInfo, PassportComScheme, PassportComSchemeG, H, HG>;
-pub(crate) type PredProof = ZeronymPredProof<
-    Bls12_381,
-    PersonalInfo,
-    PersonalInfoVar,
-    PassportComScheme,
-    PassportComSchemeG,
-    H,
-    HG,
->;
-pub(crate) type TreeProof =
-    ZeronymTreeProof<Bls12_381, PersonalInfo, PassportComScheme, PassportComSchemeG, H, HG>;
-pub(crate) type ForestProof =
-    ZeronymForestProof<Bls12_381, PersonalInfo, PassportComScheme, PassportComSchemeG, H, HG>;
 
 // Set params
 lazy_static! {
