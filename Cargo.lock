@@ -688,7 +688,7 @@ checksum = "33a33a362ce288760ec6a508b94caaec573ae7d3bbbd91b87aa0bad4456839db"
 [[package]]
 name = "linkg16"
 version = "0.1.0"
-source = "git+ssh://git@github.com/rozbb/linkg16?rev=ab6fac5b328807161787996cd9707e466b02ea03#ab6fac5b328807161787996cd9707e466b02ea03"
+source = "git+ssh://git@github.com/rozbb/linkg16?rev=a405a8501c9fa1b69f6ec1c9e39fb6885dc74233#a405a8501c9fa1b69f6ec1c9e39fb6885dc74233"
 dependencies = [
  "ark-ec",
  "ark-ff",
@@ -1374,7 +1374,7 @@ dependencies = [
 [[package]]
 name = "zkcreds"
 version = "0.1.0"
-source = "git+ssh://git@github.com/rozbb/zkcreds-rs?rev=025fc61dc7d7df3e459e7691e12a0f9c9042dcb0#025fc61dc7d7df3e459e7691e12a0f9c9042dcb0"
+source = "git+ssh://git@github.com/rozbb/zkcreds-rs?rev=18bfdf315a61dc212b1d677ac3346bff7657b68e#18bfdf315a61dc212b1d677ac3346bff7657b68e"
 dependencies = [
  "ark-bls12-381",
  "ark-crypto-primitives",

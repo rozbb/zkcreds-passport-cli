@@ -39,11 +39,6 @@ const TODAY: u32 = 20220101u32;
 const MAX_VALID_YEARS: u32 = 10u32;
 const ISSUING_STATE: [u8; STATE_ID_LEN] = *b"USA";
 
-fn load_dump() -> PassportDump {
-    let file = File::open("benches/passport/michaels_passport.json").unwrap();
-    serde_json::from_reader(file).unwrap()
-}
-
 fn gen_issuance_crs<R: Rng>(rng: &mut R) -> (PredProvingKey, PredVerifyingKey) {
     // Generate the hash checker circuit's CRS
     let pk = zkcreds::pred::gen_pred_crs::<
@@ -156,7 +151,7 @@ enum Command {
 
 fn deser_from_base64<R: Read, T: CanonicalDeserialize>(r: &mut R) -> Result<T, SerializationError> {
     let b64_reader = base64::read::DecoderReader::new(r, base64::STANDARD);
-    T::deserialize(b64_reader)
+    T::deserialize_unchecked(b64_reader)
 }
 
 fn ser_to_base64<W: Write, T: CanonicalSerialize>(
@@ -164,7 +159,7 @@ fn ser_to_base64<W: Write, T: CanonicalSerialize>(
     w: &mut W,
 ) -> Result<(), SerializationError> {
     let b64_writer = base64::write::EncoderWriter::new(w, base64::STANDARD);
-    val.serialize(b64_writer)
+    val.serialize_uncompressed(b64_writer)
 }
 
 fn main() {
