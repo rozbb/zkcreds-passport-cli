@@ -4,6 +4,12 @@ This is proof of concept code that verifies issuance requests formed from real U
 
 As this is simply an academic proof-of-concept, most of the transactions between parties are currently handled off-chain and out-of-band; the repo does not allow User and Issuer to automatically interact with each other to send or receive values.
 
+### ⚠ Disclaimer ⚠
+
+* This application, as well as the Arkworks ecosystem itself, is a (currently incomplete) academic proof-of-concept only, and has NOT been thoroughly reviewed for production use. **Do NOT use this implementation in production code.**
+
+Especially, **Do NOT deploy these smart contracts to the main Ethereum network (mainnet)**. As a reminder, smart contract "dapps" are notoriously difficult to patch, update, bugfix, or revert once they are deployed onto the blockchain and, as consistent with the [MIT License](LICENSE-MIT), the authors of this repo are NOT liable in any form for any damages, financial or otherwise, that result from this code.
+
 ### Request to issue user's cred
 
 In any subdirectory, run the command `cargo run --release -- help` for a list of subcommands involving the construction and parsing of issuance requests and credential lists. For a User's request:
