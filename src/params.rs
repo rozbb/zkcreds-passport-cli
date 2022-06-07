@@ -81,6 +81,7 @@ pub(crate) type PassportComSchemeG =
     zkcreds::compressed_pedersen::constraints::CommGadget<EdwardsParameters, FqVar, Window9x128>;
 
 pub(crate) type ComTree = zkcreds::com_tree::ComTree<Fr, H, PassportComScheme>;
+pub(crate) type ComTreeWireFormat = zkcreds::com_tree::ComTreeWireFormat<Fr, H, PassportComScheme>;
 
 /// Type aliases for Groth16 stuff
 pub(crate) type PredProof = ZkcredsPredProof<

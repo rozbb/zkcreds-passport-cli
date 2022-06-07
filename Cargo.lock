@@ -1374,7 +1374,7 @@ dependencies = [
 [[package]]
 name = "zkcreds"
 version = "0.1.0"
-source = "git+ssh://git@github.com/rozbb/zkcreds-rs?rev=18bfdf315a61dc212b1d677ac3346bff7657b68e#18bfdf315a61dc212b1d677ac3346bff7657b68e"
+source = "git+ssh://git@github.com/rozbb/zkcreds-rs?rev=f222ed824cb0f18ca3729273ebe78ecb8a9c7ba9#f222ed824cb0f18ca3729273ebe78ecb8a9c7ba9"
 dependencies = [
  "ark-bls12-381",
  "ark-crypto-primitives",

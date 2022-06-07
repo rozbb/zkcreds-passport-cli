@@ -7,8 +7,8 @@ mod sig_verif;
 
 use issuance_checker::{IssuanceReq, PassportHashChecker};
 use params::{
-    ComTree, PassportComScheme, PassportComSchemeG, PredProvingKey, PredVerifyingKey, H, HG,
-    MERKLE_CRH_PARAM, STATE_ID_LEN,
+    ComTree, ComTreeWireFormat, PassportComScheme, PassportComSchemeG, PredProvingKey,
+    PredVerifyingKey, H, HG, MERKLE_CRH_PARAM, STATE_ID_LEN,
 };
 use passport_dump::PassportDump;
 use passport_info::{PersonalInfo, PersonalInfoVar};
@@ -147,6 +147,13 @@ enum Command {
         #[clap(short, long, parse(from_os_str), value_name = "FILE")]
         creds: PathBuf,
     },
+
+    /// Computes the root of the given sparse merkle tree, and outputs it in base64 to STDOUT
+    GetRoot {
+        /// Path to tree file
+        #[clap(short, long, parse(from_os_str), value_name = "FILE")]
+        tree: PathBuf,
+    },
 }
 
 fn deser_from_base64<R: Read, T: CanonicalDeserialize>(r: &mut R) -> Result<T, SerializationError> {
@@ -231,7 +238,18 @@ fn main() {
             }
 
             // Now serialize the tree
-            ser_to_base64(tree, &mut io::stdout()).expect("couldn't serialize tree");
+            ser_to_base64(tree.into_wire_format(), &mut io::stdout())
+                .expect("couldn't serialize tree");
+        }
+        Command::GetRoot { tree } => {
+            // Deserialize the request and verification key
+            let mut tree_file = File::open(tree).expect("couldn't open tree file");
+            let raw_tree = deser_from_base64::<_, ComTreeWireFormat>(&mut tree_file)
+                .expect("couldn't deserialize tree");
+            // Add the CRH params to make it a fully fledged ComTree
+            let tree = raw_tree.into_com_tree(MERKLE_CRH_PARAM.clone());
+            // Now output the root
+            ser_to_base64(tree.root(), &mut io::stdout()).expect("couldn't serialize root");
         }
     }
 }
