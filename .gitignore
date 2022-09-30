@@ -4,5 +4,4 @@ michaels_isureq.txt
 Cargo.lock
 package-lock.json
 node_modules
-eth/mnemonic.txt
-eth/build
+eth/
