@@ -8,9 +8,46 @@ As this is simply an academic proof-of-concept, most of the transactions between
 
 * This application, as well as the Arkworks ecosystem itself, is an academic proof-of-concept only, and has not been thoroughly reviewed or audited. **Do NOT use this implementation in production code.**
 
-### Request to issue credential
+## Usage
 
-In any subdirectory, run the command `cargo run --release -- help` for a list of subcommands involving the construction and parsing of issuance requests and credential lists. For a User's request:
-1. A trusted party (hereafter, "Issuer") runs the `gen-crs` subcommand to generate a proving and verifying key `(pk, vk)`, specifying the destination files for each. Issuer sends `(pk, vk)` to User.
-2. User runs the `issue-req` subcommand on a valid JSON-encoded passport dump to generate a base64-encoded issuance request. User hands the issuance request to the Issuer.
-3. Issuer runs the `issue-grant` subcommand on the issuance request to verify the issuance criteria. If so, it outputs the base64-encoded credential itself to be issued.
+Here's a list of tasks you can do with this CLI, and example commands to do them. The CLI has help built in too. Run `cargo run --release -- help` for a list of subcommands involving the construction and parsing of issuance requests and credential lists.
+
+### Generating the proving key material
+
+A trusted party (the "Issuer") generates a proving and verifying key `(pk, vk)`. In a real deployment, these are made public.
+
+```shell
+cargo run --release gen-crs --proving-key pk.key --verifying-key vk.key
+```
+
+### Generating an issuance request
+
+A user who has dumped their passport using the [passport dumping utility](https://github.com/rozbb/zkcreds-passport-dumper) submits an issuance request to the issuer. That is, it proves that it has a valid passport and asks that a commitment to it be included in the issuer's Merkle tree.
+
+```shell
+cargo run --release issue-req --proving-key pk.key --dump-file passport_dump.json > issuereq.bin
+```
+
+### Granting an issuance request
+
+An issuer receives an issuance request and verifies that it's valid. On success, it will save the credential (the aforementioned commitment).
+
+```shell
+cargo run --release issue-grant --verifying-key vk.key < issuereq.bin > cred.bin
+```
+
+### Forming a tree from all the credentials
+
+An issuer represents its list of issued credentials as a Merkle tree whose leaves are the credentials. It takes a newline-separated list of credentials and outputs its tree representation.
+
+```shell
+cargo run --release gen-tree --creds creds.bin > tree.bin
+```
+
+### Getting the root of a tree
+
+The root of a Merkle tree is a succinct representation of the entire tree. The issuer can calculate it as follows.
+
+```shell
+cargo run --release get-root --tree tree.bin > root.bin
+```
