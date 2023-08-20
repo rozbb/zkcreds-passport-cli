@@ -15,7 +15,7 @@ pub struct PassportDump {
     pub(crate) econtent: Vec<u8>,
     #[serde(deserialize_with = "bytes_from_b64")]
     pub(crate) sig: Vec<u8>,
-    #[serde(deserialize_with = "bytes_from_b64")]
+    #[serde(rename = "cert", deserialize_with = "bytes_from_b64")]
     pub(crate) _cert: Vec<u8>,
     #[serde(rename = "digest-alg")]
     pub(crate) _digest_alg: String,
